@@ -1,6 +1,7 @@
 /*
- David Benjamín Ruíz Salazar
- Naji M A Saadat
+ Naji M A Saadat A01025599
+ David Benjamín Ruíz Salazar A01020825
+ Se hizo con colaboracion del equipo 12 ; Rafael Díaz Medina , Edgar García  
  */
 
 #include <stdio.h>
@@ -44,7 +45,7 @@ int main(int argc, const char * argv[]){
         exit(-1);
     }
     
-    int  receivedInt;//*Para el pid que recibimos
+    int  receivedInt;
     cliente = socket(PF_INET, SOCK_STREAM, 0);
     inet_aton(argv[1], &direccion.sin_addr);
     direccion.sin_port = htons(TCP_PORT);
@@ -77,6 +78,7 @@ int main(int argc, const char * argv[]){
                     estado = 2;
                     printf("Emergencia\n");
                     sigprocmask(SIG_BLOCK, &Signals, NULL);
+                    //pause();
                 }
                 else if ( estado == 2){
                     printf("Normal\n");
@@ -85,16 +87,16 @@ int main(int argc, const char * argv[]){
             }
             else if (ntohl(receivedInt) == 3 ){
                 if( estado != 3){
-                    estado = 2;
+                    estado = 3;
                     printf("Intermitente\n");
                     sigprocmask(SIG_BLOCK, &Signals, NULL);
+                    //pause();
                 }
                 else if ( estado == 3){
                     printf("Normal\n");
                     sigprocmask(SIG_UNBLOCK, &Signals, NULL);
                 }
-            }
-            
+            } 
         }
     }
     close(cliente);

@@ -1,8 +1,8 @@
 /*
- David Benjamín Ruíz Salazar
- Naji M A Saadat
+ Naji M A Saadat A01025599
+ David Benjamín Ruíz Salazar A01020825
+ Se hizo con colaboracion del equipo 12 ; Rafael Díaz Medina , Edgar García  
  */
-
 
 #include <stdio.h>
 #include <sys/socket.h>
@@ -14,6 +14,7 @@
 #include <signal.h>
 
 #define TCP_PORT 8000
+#define time 3
 
 
 void gestor(int);
@@ -23,16 +24,14 @@ void estadoActual(int);
 
 int semaforo;
 int cliente[4];
-int CtrlZ;
-int CtrlC;
+int CtrlZ, CtrlC;
+
 int main(int argc, const char * argv[]){
     sigset_t Signals;
     
     struct sockaddr_in direccion;
-    
     int pidReceived;
     int servidor;
-    
     ssize_t leidos;
     socklen_t escritos;
     int continuar = 1;
@@ -55,11 +54,8 @@ int main(int argc, const char * argv[]){
     inet_aton(argv[1], &direccion.sin_addr);
     direccion.sin_port = htons(TCP_PORT);
     direccion.sin_family = AF_INET;
-    
     bind(servidor, (struct sockaddr *) &direccion, sizeof(direccion));
-    
     listen(servidor, 4);
-    
     escritos = sizeof(direccion);
     
     int * semaforos;
@@ -120,6 +116,7 @@ int main(int argc, const char * argv[]){
     return 0;
 }
 void estadoActual(int s) {
+    sleep(1);
     for (int i=0; i<4; i++) {
         if (i == s){
             printf("\033[0;92m");
@@ -146,12 +143,14 @@ void gestor(int s){
 }
 void gestorSIGTSTP(int s){
     if (CtrlZ%2==0){
-        printf("\nAcabo de enviar el mensaje ROJO Ctrl+Z a todos los semaforos\n");
+        printf("\n***** Ctrl Z Rojo todos los semaforos*****\n");
         for (int c=0; c<4; c++) {
             printf("\033[0;91m");
             printf("Semaforo %d: ROJO\n", c);
             printf("\033[0m");
+            sleep(1);
         }
+        printf("\n***** Todos los Semaforos en Rojo *****\n");
     }else{
         printf("\nSemaforos Estado normal\n");
     }
@@ -159,22 +158,20 @@ void gestorSIGTSTP(int s){
     CtrlZ++;
 }
 
-
 void gestorSIGINT(int s){
-    
-    
-    if (CtrlC%2==0){
-        printf("\nAcabo de enviar el mensaje ROJO Ctrl+C a todos los semaforos\n");
+    if (CtrlC%2==0  ){
+        printf("\n *****Ctrl C Intermitente todos los semaforos*****\n");
         for (int c=0; c<4; c++) {
             printf("\033[0;93m");
             printf("Semaforo %d Intermitent\n", c);
             printf("\033[0m");
+            sleep(1);
         }
+        printf("\n***** Todos los Semaforos en Intermitent *****\n");
     }
     else {
         printf("\nSemaforos Estado normal\n");
     }
-    
     CtrlC++;
 }
 
